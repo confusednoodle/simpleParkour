@@ -9,7 +9,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
-	
+
 func _input(event):
 	if event is InputEventMouseMotion:
 		my_rotate_x(deg_to_rad(event.relative.y * mouseSens))
@@ -18,6 +18,6 @@ func _input(event):
 func my_rotate_x(angle):
 	rotation_degrees.x += angle
 	rotation_degrees.x = clamp(rotation.x, -90, 90)
-	
+
 func my_rotate_y(angle):
 	rotation_degrees.y += angle
