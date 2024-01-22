@@ -7,34 +7,19 @@ extends CharacterBody3D
 var target_velocity = Vector3.ZERO
 
 func _physics_process(delta):
-	var direction = Vector3.ZERO
-	
-	#direction stuff
-	if Input.is_action_pressed("move_left"):
-		direction.x -= 1
-	if Input.is_action_pressed("move_right"):
-		direction.x += 1
-	if Input.is_action_pressed("move_forward"):
-		direction.z -= 1
-	if Input.is_action_pressed("move_back"):
-		direction.z += 1
-	
-	#no vectoring pls
-	if direction != Vector3.ZERO:
-		direction = direction.normalized()
-		$Pivot.look_at(position + direction, Vector3.UP)
-	
-	#ground velocity
-	target_velocity.x = direction.x * speed
-	target_velocity.z = direction.z * speed
-	
-	#vertical velocity
 	if not is_on_floor():
-		target_velocity.y = target_velocity.y - (fall_acceleration * delta)
+		velocity.y -= fall_acceleration * delta
 	
-	velocity = target_velocity
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = jump_impulse
 	
-	if is_on_floor() and Input.is_action_pressed("jump"):
-		target_velocity.y = jump_impulse
-		
+	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var direction = ($camera.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	if direction:
+		velocity.x = direction.x * speed
+		velocity.z = direction.z * speed
+	else:
+		velocity.x = move_toward(velocity.x, 0, speed)
+		velocity.z = move_toward(velocity.z, 0, speed)
+	
 	move_and_slide()
